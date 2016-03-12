@@ -1,0 +1,263 @@
+<!Doctype html>
+<html>
+    <head>
+       <meta charset="utf-8">
+       <meta http-equiv="X-UA-Compatible" content="IE=edge">
+       <meta name="viewpoint" content="width=device-width, initial scale=1">
+	   <title>Zhuoyu's DIP Week Journal</title> 
+       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+	   <link rel="stylesheet" href="../css/main.css" type="text/css">
+    </head>
+    <body>
+        <div calss="container" id="top">
+            <div class="row header">
+                <div class="col-xs-8 col-xs-push-2">
+                    <h2>ENEE631 Digital Image Processing Week Journal</h1>
+			        <h3>@Zhuoyu Li, University of Maryland, College Park </h3>
+                </div>
+                <div class="col-xs-2">
+                    <a href="https://github.com/lzyraining/DIP-Week-Journal.git" target="_blank"><img class="img-responsive logo" src="../image/github_logo.png"></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="nav-bar col-xs-3">
+                    <div class="row mypicture">
+                        <div class="col-xs-8 col-xs-push-2">
+                            <image class="me img-responsive" src="../image/IMG_0846.jpg"></image>
+                        </div>
+                    </div>
+                    <div class="row nav-content">
+                        <ul class="nav-tab">
+                           <a href="../index.html"><li><span class="glyphicon glyphicon-home" aria-hidden="true"></span> &nbsp;&nbsp;&nbsp;Home</li></a>
+                           <a href="matlab_warmup.pdf" target="_blank"><li><span class="glyphicon glyphicon-fire" aria-hidden="true"></span> &nbsp;&nbsp;&nbsp;Matlab Warmingup</li></a>
+                           <li class="inactive"><span class="glyphicon glyphicon-book" aria-hidden="true"> Week Journal</li>
+                              <ul class="jounal-content">
+                                  <a href="Week2.html"><li>Week 2</li></a>
+                                  <a href="Week3.html"><li>Week 3</li></a>
+                                  <a href="Week4.html"><li>Week 4</li></a>
+                                  <a href="Week5.html"><li>Week 5</li></a>
+                                  <a href="Week6.html"><li>Week 6</li></a>
+                                  <a href="Week8.html"><li>Week 8</li></a>
+                                  <a href="Week11.html"><li class="active">Week 11</li></a>
+                                  <a href="Week13.html"><li>Week 13</li></a>
+                              </ul>
+                        </ul>
+                    </div>   
+                </div>
+                <div class="col-xs-9 content">
+                    <div class="topic">
+                        <h3> Multiresolution processing &amp; DCT based watermark insertion and extraction</h3>		        
+                        <h4><em> Image Pyramid </em></h3>
+			            <h6>Written by <em>Zhuoyu Li</em> on April 14, 2015.</h6>
+                        <p> Here we start with a 512x512 lena image, and use the following diagram to realize the image pyramid. (Refer to Gonzale's book Chapt.7) <p>
+                        <div class="content-image">
+                            <img src="../image/April 14/1.PNG">			 
+			            </div>
+			            <p>Here we use average filter to approximate the original image and then use bilinear interpolation filter for interplation. The size of the original image is 512x512 (High resolution J=9), and we show the low resolution J=8, 7, 6 (256x256, 128x128, 64x64).</p>
+                        <div class="content-image">
+			               <img src="../image/April 14/appA1.jpg">
+				           <img src="../image/April 14/appA2.jpg">
+				           <img src="../image/April 14/appA3.jpg">
+			            </div>
+                        <p>Then we get the predicted residue image. In order see the difference clear, we show the log value of the residue image.</p>
+                        <div class="content-image">
+			                <img src="../image/April 14/resA2.jpg ">
+				            <img src="../image/April 14/resA3.jpg ">
+				            <img src="../image/April 14/resA4.jpg">
+                        </div>
+                        <p>Then we get the predicted residue image. In order see the difference clear, we show the log value of the residue image.</p>
+		                <div class="content-image">
+			                <img src="../image/April 14/resA2.jpg ">
+				            <img src="../image/April 14/resA3.jpg ">
+				            <img src="../image/April 14/resA4.jpg">
+			            </div>
+                        <p>Matlab code:</p>
+                        <pre class="mcode">
+clear;clc;
+A=imread('lena_512.jpg');
+Gfilter=ones(3,3)/9;
+interpfilter=[1/4,1/2,1/4;1/2,1,1/2;1/4,1/2,1/4];
+
+[appA1 resA1]=ImgPyramid(A,Gfilter,interpfilter);
+[appA2 resA2]=ImgPyramid(appA1,Gfilter,interpfilter);
+[appA3 resA3]=ImgPyramid(appA2,Gfilter,interpfilter);
+[appA3 resA4]=ImgPyramid(appA3,Gfilter,interpfilter);
+resA2=log10(double(resA2));
+resA3=log10(double(resA3));
+resA4=log10(double(resA4));
+imwrite(appA1,'appA1.jpg');
+imwrite(appA2,'appA2.jpg');
+imwrite(appA3,'appA3.jpg');
+imwrite(resA2,'resA2.jpg');
+imwrite(resA3,'resA3.jpg');
+imwrite(resA4,'resA4.jpg');
+
+function [appA resA]=ImgPyramid(A,filter,interpfilter)
+
+[row col]=size(A);
+if row/2==1
+   row1=(row-1)/2;
+else row1=row/2;
+end
+if col/2==1
+   col1=(col-1)/2;
+else col1=col/2;
+end
+    
+appA=zeros(row1,col1);
+fA2=zeros(2*row1,2*col1);
+fA=imfilter(A,filter,'replicate'); %Approximation
+appA=fA(1:2:row1*2,1:2:col1*2); %downsampling
+fA2(1:2:row1*2,1:2:col1*2)=appA(1:row1,1:col1); %upsampling
+fA2=imfilter(fA2,interpfilter,'replicate');   %interplation
+resA=A(1:2*row1,1:2*col1)-uint8(fA2);
+end   </pre>
+
+                </div>
+                    <hr>
+                    <div class="topic">
+                        <h3><em> Subband coding </em></h3>
+			            <h6>Written by <em>Zhuoyu Li</em> on April 14, 2015.</h6>
+			            <p> Then we show another method called subband coding for image multiresolution processing. Here we start with 256x256 lena image and process the image 
+			     with the following diagram. (Refer to Gonzale's book Chapt.7) This can be implemented as wavelet transform coding for image compression and image denoise.</p>
+		                <div class="content-image">
+			                <img src="../image/April 14/2.PNG">
+			            </div>
+			            <p>After implement single level wavelet transform, we can get the approximate details, horizontal details, vertical details and diagonal details in this subband channel.
+                We can also input the approximate image into next low resolution channel to further processing. We can use the wavelet transform toolbox to easy get acess to the fast 
+                discrete wavelet transform. Here we only show single level wavelet transform. And if we compare the result of horizontal details and verital details, we can see obvious
+                differences in lena's hat.</p>
+			            <div class="content-image">
+			                <img src="../image/April 14/X.jpg">
+			            </div>
+                        <p>Matlab Code:</p>
+                        <pre class="mcode">
+clear;clc;
+g0=[0.23037781,0.71484657,0.63088076,...
+   -0.02798376,-0.18703481,0.03084138,...
+   0.03288301,-0.01059740];    %Daubenchies coefficients
+for i=1:1:8
+    g1(i)=(-1)^(i-1)*g0(8-i+1);
+end
+for i=1:1:8
+    h0(i)=g0(8-i+1);
+    h1(i)=g1(8-i+1);
+end
+
+A=imread('lena_512.jpg');
+[row col]=size(A);
+A0=imfilter(A,h0,'replicate');
+a0=A0(1:2:row,1:col);
+A00=imfilter(a0,h0,'replicate');
+a=A00(1:row/2,1:2:col);
+A01=imfilter(a0,h1,'replicate');
+dV=A01(1:row/2,1:2:col);
+A1=imfilter(A,h1,'replicate');
+a1=A1(1:2:row,1:col);
+A10=imfilter(a1,h0,'replicate');
+dH=A10(1:row/2,1:2:col);
+A11=imfilter(a1,h1,'replicate');
+dD=A11(1:row/2,1:2:col);
+
+a=double(a); dV=double(dV); dH=double(dH); dD=double(dD); 
+X=[a*0.003, log10(dH)*0.3; log10(dV)*0.3, log10(dD)*0.3];
+imwrite(X,'X.jpg'); 	</pre>
+                    </div>
+                    <hr>
+                    <div class="topic">
+                        <h3><em> DCT based watermark insertion and extraction </em></h3>
+			            <h6>Written by <em>Zhuoyu Li</em> on April 14, 2015.</h6>
+			            <p style="margin-top: -10px;">We can use DCT to insert watermark into one image and extract the image from the watermarked image in frequency domain. We can process the original image and watermark 
+			    image with DCT in frequency domain. Then we insert watermark  and do inverse DCT to get the watermark image and then check the authentication. Inversely, we can extract 
+				watermark from the watermarked image in frequency domain. Then we show that the results of water lena image with DIP image and extraction of the watermark.</p>
+		               <div class="content-image">
+			               <img src="../image/April 14/lena.jpg">
+				           <img src="../image/April 14/dip.jpg">
+			           </div>
+			           <p>Then we show the watermarked image and extracted watermark. And we calculate correlation the extracted watermark image with the original watermark (corr=0.6478).
+			    The reason for the low correlation is that we only use 16 coefficients of the DCT coefficients, and when we extract the watermark, the some portion of the extracted
+				coefficients are left in lena image. </p>
+			           <div class="content-image">
+			               <img src="../image/April 14/wmd.jpg">
+				           <img src="../image/April 14/rewm.jpg">
+			           </div>
+                       <p>Matlab Code:</p>    
+                       <pre class="mcode">
+clear; clc;
+A=imread('lena.jpg');
+wm=imread('dip.jpg');
+A=double(A);
+wm=double(wm);
+Mask=[1,1,1,1,1,1,1,1;
+       1,1,1,1,1,1,1,0;
+       1,1,1,1,1,1,0,0;
+       1,1,1,1,1,0,0,0;
+       1,1,1,1,0,0,0,0;
+       1,1,1,0,0,0,0,0;
+       1,1,0,0,0,0,0,0;
+       1,0,0,0,0,0,0,0];
+% dct transformation
+DCT_A=DCT_transform(A,8,Mask);
+DCT_wm=DCT_transform(wm,8,Mask);
+% Insert watermark image
+DCT_wmA=0.9*DCT_A+0.1*DCT_wm;
+% Inverse dct transformation
+In_DCT_wmA=In_DCT_transform(DCT_wmA,8);
+
+% Extract watermark image
+DCT_A1=DCT_transform(In_DCT_wmA,8,Mask);
+DCT_re_wm=(DCT_A1-0.9*DCT_A)/0.1;
+In_DCT_re_wm=DCT_transform(DCT_re_wm,8,Mask);
+% calculate the correlation between oringial watermark image with 
+% extracted one
+corr=corr2(uint8(wm),uint8(In_DCT_re_wm));
+imwrite(uint8(In_DCT_wmA),'wmd.jpg');
+imwrite(uint8(In_DCT_re_wm),'rewm.jpg');
+
+function DCT_ImgA=DCT_transform(Img,blocksize,Mask)
+[row col]=size(Img);
+
+%--------determine the blocking size----------%
+block_size=blocksize;
+T=dctmtx(block_size);
+
+%-------DCT tranformation-------%
+ImgA=Img-128; %swith the image to -128-127 level
+DCT_ImgA=zeros(row,col);
+for i=1:block_size:row
+    for j=1:block_size:col
+        DCT_matrix=ImgA(i:i+block_size-1,j:j+block_size-1);
+        DCT_matrix=T*DCT_matrix*T';
+        DCT_matrix=DCT_matrix.*Mask;
+        DCT_ImgA(i:i+block_size-1,j:j+block_size-1)=DCT_matrix;
+    end
+end
+end
+
+function InverseImg=In_DCT_transform(DCT_ImgA,blocksize)
+[row col]=size(DCT_ImgA);
+%--------determine the blocking size----------%
+block_size=blocksize;
+T=dctmtx(block_size);
+
+%-------Inverse DCT tranformation-------%
+InvDCT_ImgA=zeros(row,col);
+for i=1:block_size:row
+    for j=1:block_size:col
+        InvDCT_matrix=DCT_ImgA(i:i+block_size-1,j:j+block_size-1);
+        InvDCT_matrix=T'*InvDCT_matrix*T;
+        InvDCT_ImgA(i:i+block_size-1,j:j+block_size-1)=InvDCT_matrix;
+    end
+end
+InverseImg=InvDCT_ImgA+128; </pre>    
+                    </div>
+                </div> 
+        </div>
+        <a class="topping" href="#top"><span class="glyphicon glyphicon-arrow-up gly-topping"></span></a>
+        <footer class="row">
+            &copy; Zhuoyu Li 2015
+        </footer>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    </body>
+</html>

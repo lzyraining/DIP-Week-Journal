@@ -1,0 +1,86 @@
+body {
+    font-family: arial;
+}
+.header {
+    background-color: rgba(210, 209, 184, 0.73);
+    text-align: center;
+}
+.logo {
+    padding-top: 10%;
+    margin-left: 70%;
+}
+.nav-bar {
+    background-color: rgba(151, 153, 165, 0.77);
+}
+.mypicture {
+    margin-top: 10%;
+    margin-bottom: 10%;
+}
+.me {
+    border-radius: 50%;
+    width: 70%;
+}
+.nav-tab a {
+    text-decoration: none;
+    color: black;
+}
+.nav-tab li {
+    list-style-type: none;
+    font-size: 20px;
+    margin-left: -6%;
+    padding-left: 16%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+}
+.nav-tab a li:hover {
+    background-color: rgba(79, 28, 125, 0.77);
+}
+.active {
+    background-color: rgba(79, 28, 125, 0.77);
+    margin: 0;
+    
+}
+.content {
+    font-size: 20px;
+    padding-left: 3%;
+    padding-right: 3%;
+    padding-top: 1%;
+    text-align: justify;
+}
+.refer {
+    float: right;
+    width: 15%;
+    margin-right: 6%;
+}
+.mcode {
+    font-size: 16px;
+    background-color: rgba(183, 196, 208, 0.4);
+    padding-left: 10%;
+}
+    
+footer {
+    background-color: black;
+    color: white;
+    padding: 0.5%;
+    text-align: center;
+}
+.content-image {
+    text-align: center;
+}
+.topping {
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    bottom: 2%;
+    right: 3%;
+    background-color: rgba(121, 142, 127, 0.29);
+    text-align: center;
+}
+.gly-topping {
+    margin-top: 15px;
+    font-size: 150%;
+    color: rgb(121, 142, 127);
+}
+.gly-topping:hover {
+    color: black;
+}

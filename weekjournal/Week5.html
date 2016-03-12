@@ -1,0 +1,269 @@
+<!Doctype html>
+<html>
+    <head>
+       <meta charset="utf-8">
+       <meta http-equiv="X-UA-Compatible" content="IE=edge">
+       <meta name="viewpoint" content="width=device-width, initial scale=1">
+	   <title>Zhuoyu's DIP Week Journal</title> 
+       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+	   <link rel="stylesheet" href="../css/main.css" type="text/css">
+    </head>
+    <body>
+        <div calss="container" id="top">
+            <div class="row header">
+                <div class="col-xs-8 col-xs-push-2">
+                    <h2>ENEE631 Digital Image Processing Week Journal</h1>
+			        <h3>@Zhuoyu Li, University of Maryland, College Park </h3>
+                </div>
+                <div class="col-xs-2">
+                    <a href="https://github.com/lzyraining/DIP-Week-Journal.git" target="_blank"><img class="img-responsive logo" src="../image/github_logo.png"></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="nav-bar col-xs-3">
+                    <div class="row mypicture">
+                        <div class="col-xs-8 col-xs-push-2">
+                            <image class="me img-responsive" src="../image/IMG_0846.jpg">
+                        </div>
+                    </div>
+                    <div class="row nav-content">
+                        <ul class="nav-tab">
+                           <a href="../index.html"><li><span class="glyphicon glyphicon-home" aria-hidden="true"></span> &nbsp;&nbsp;&nbsp;Home</li></a>
+                           <a href="matlab_warmup.pdf" target="_blank"><li><span class="glyphicon glyphicon-fire" aria-hidden="true"></span> &nbsp;&nbsp;&nbsp;Matlab Warmingup</li></a>
+                           <li class="inactive"><span class="glyphicon glyphicon-book" aria-hidden="true"> Week Journal</li>
+                              <ul class="jounal-content">
+                                  <a href="Week2.html"><li>Week 2</li></a>
+                                  <a href="Week3.html"><li>Week 3</li></a>
+                                  <a href="Week4.html"><li>Week 4</li></a>
+                                  <a href="Week5.html"><li class="active">Week 5</li></a>
+                                  <a href="Week6.html"><li>Week 6</li></a>
+                                  <a href="Week8.html"><li>Week 8</li></a>
+                                  <a href="Week11.html"><li>Week 11</li></a>
+                                  <a href="Week13.html"><li>Week 13</li></a>
+                              </ul>
+                        </ul>
+                    </div>   
+                </div>
+                <div class="col-xs-9 content">
+                    <div class="topic">
+                        <h3>Sptial Filter (Frequency Domain) </a></h3>
+                        <h4><em>Average Filter </em></h4>
+                        <h6><em>Written by Zhuoyu Li</em> on Feb. 24, 2015.</h6>
+                        <p>As we discuss before, we can use certain spatial mask to enhance images by convolute the image with mask in time domain. </p>
+                        <p>We can also manipulate with images in frequency domain, transforming the convolution relation to multiple relation in frequency domain.</p>
+                        <p>The basic steps using DFT filter in frequency domain with matlab are following:</p>
+                        <p>1. Pad the given image with size MxN with new size PxQ (P=2*M,Q=2*N).</p>
+                        <p>2. Define the DFT filter with siez PxQ.</p>
+                        <p>3. Multiple the Fourier transform of given image with DFT filter.</p>
+                        <p>4. Inverse the output image into time domain.</p>
+                        <p>5. Obtain the final result of size MxN.</p>
+                        <p> We start with a black and white pad image, which is a good example.
+                        <div class="content-image">
+                           <img src="../image/Mar 6/square.jpg" style="width: 256px; height: 256px;">
+                        </div>
+                        <p>Here we define a Gaussian filter. And the following image show the fiter in frequency domain.</p>
+                        <div class="content-image">
+                           <img src="../image/Mar 6/guassainfilter.jpg" style="width: 256px; height: 256px;">
+                        </div>
+                        <p>We have know that when a Guassian filter applied to an image, the image would be soomthed.<br>
+                        <p>In frequency domain, whether we pad the original image with '0' or not, the smoothing effect is different. <br>
+                        <p>Firstly we show the given image with padding is manipulated with a Gaussain filter in frequency domain. The output image is as follow. <br>
+                        <p>The result shows that the image is blurred (it is obvious in the interface between the black and white.). But we can see that the transverse edeg is blurred while the verticle edge is not blurred. </p>
+                        <div class="content-image">
+                            <img src="../image/Mar 6/wopadding.jpg" style="width: 256px; height: 256px;">
+                        </div>   
+                        <p>Then we porcess the image by padding extra space with value '0'. And we can see the verticle edge of the output image is also blurred.. </p>
+                        <div class="content-image">
+                            <img src="../image/Mar 6/wpadding.jpg" style="width: 256px; height: 256px;">
+                        </div>
+                        <p>Matlab Code:</p>
+                        <pre class="mcode">
+%-------Read image information---------%
+clear;clc;
+A=imread('square.tif'); 
+imwrite(A,'square.jpg');
+[M,N]=size(A); 
+                
+%-------define Gaussian filter---------%
+u=-floor(M/2)+1:1:floor(M/2);
+v=-floor(N/2)+1:1:floor(N/2);
+[U,V]=meshgrid(u,v);
+sigma=30;
+G=exp(-(U.^2+V.^2)/(2*sigma^2));
+imwrite(G,'guassainfilter.jpg');
+              
+%------Soomthing image without padding-----%
+FA=fftshift(fft2(A));
+FB=FA.*G;
+B=(ifft2(FB));
+B=abs(B);
+imwrite(uint8(B),'wopadding.jpg');
+              
+%------Soomthing image without padding-----%
+A1=padarray(A,[M/2,N/2],0);
+FA1=fftshift(fft2(A1));
+G1=padarray(G,[M/2,N/2],0);
+FB1=FA1.*G1;
+B1=(ifft2(FB1));
+B1=abs(B1);
+B2=B1(M/2:3*M/2-1,N/2:3*N/2-1);
+imwrite(uint8(B2),'wpadding.jpg');
+                        </pre>
+                        <p>Results discussion:</p>
+                        <p>When matlab process image with DFT, it regardes the image as a period signal. So the the image is replicated in its neighbor. When the image is not padded, the white edge is connected to another white edge and black edge is connected to another black edge. </p>
+                        <p>When the image is smoothed, as there is no obvious contrast between white and white (black and black). The edge is compensated with its neighbor. So the result show that the vertical edge is not blurred. </p> 
+                        <p>But if we pad the original image to size PxQ. The outside of the original region is paded with value '0'. In the DFT processing, the image is replicated with new size PxQ. </p>
+                        <p>In this way, the orignial period extends twice and the veritcle edge is also blurred after smoothing. </p>
+                        <br>
+                        <h4><em> High pass filter </em></h4>
+                        <h6><em>Written by Zhuoyu Li</em> on Feb. 24, 2015.</h6>
+                        <p> We can easily obtain the high pass filter when given a low pass filter using the simple relation: HPF=1-LPF. </p>
+                        <p> Code source is not shown here. The code is similar by adding "H=ones(2*M,2*N)-G1;".</p>
+                        <p> Here we show the original image and output image which through the High pass filter.  </p>
+                        <div class="content-image">
+                           <img src="../image/Mar 6/test.jpg" style="width: 256px; height: 256px;">
+                           <img src="../image/Mar 6/high.jpg" style="width: 256px; height: 256px;">   
+                        </div>
+                        <p> Then we apply the high pass filter to enhence the edge. Here's the result. The result shows that the image's edges are also enhenced due to padding. </p>
+                        <div class="content-image">
+                            <img src="../image/Mar 6/edge.jpg" style="width: 256px; height: 256px;">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="topic">
+                        <h3>Image restoration</h3>
+                        <p>Once we have the knowleges of the blurred filter and SNR, imgae restoration becomes very easy.</p>
+                        <p>We can use the Wiener filter with the function of 'deconvwnr' or constrained least squares filter with the function 'deconvreg' to recover the image (refer to matlab image processing toolbox documentation). </p>
+                        <p>In order to fully understand what happens to a blurred image, we show the transformation process in frequency domain. (Here I don't pad the original picture)</p>
+                        <h4><em>Inverse Filter</em></h4>
+                        <h6><em>Written by Zhuoyu Li</em> on Feb. 24, 2015.</h6>
+                        <p> We start with 256x256 gray level image.
+                        <div class="content-image">
+                            <img src="../image/Mar 6/lena.jpg">
+                        </div>
+                        <p>Define the motion fliter. Here I define the motion filter, padding it with value '0' with the same size of lena image. Then I transfer the filter to frequency domain.</p>
+                        <p>Here the frequency spectrum of the motion filter is shown. As the motion angle is defined as 45, the nodes of the sinc function is in 45 degree.
+                        <div class="content-image">
+                            <img src="../image/Mar 6/2.jpg"/>
+                        </div>
+                        <p>Then we manipulate the image in frequency domain. And the following images are original image, blurred image and recovered image. </p>
+                        <div class="content-image">
+                            <img src="../image/Mar 6/lena.jpg">
+                            <img src="../image/Mar 6/blurred.jpg">
+                            <img src="../image/Mar 6/Inwonoise.jpg">
+                        </div>
+                        <p>And here are the spectrum of the corresponding images.</p>
+                        <div class="content-image">
+                            <img src="../image/Mar 6/1.jpg" style="height: 256px">
+                            <img src="../image/Mar 6/3.jpg" style="height: 256px">
+                            <img src="../image/Mar 6/4.jpg" style="height: 256px">
+                        </div>
+                        <p>In oder to see what happens when we apply inverse filter to a noisy blurring image, we analysis the process. </p>
+                        <p>We apply Gaussain noise with mean=0 and sigma=0.01. </p>
+                        <p>The following images are blurred image, noise images, noisy blurring images, and restored images.</p>
+                        <div class="content-image">
+                            <img src="../image/Mar 6/blurred.jpg" style="width: 222px;">
+                            <img src="../image/Mar 6/noise.jpg" style="width: 222px;">
+                            <img src="../image/Mar 6/noiseblurred.jpg" style="width: 222px;">
+                            <img src="../image/Mar 6/Inwnoise.jpg" style="width: 222px;">
+                        </div>
+                        <p>The followings are the spectrum of the corresponding images.</p>
+                        <div class="content-image">
+                            <img src="../image/Mar 6/3.jpg"/>
+                            <img src="../image/Mar 6/5.jpg"/>
+                            <img src="../image/Mar 6/6.jpg"/>
+                            <img src="../image/Mar 6/7.jpg"/>
+                        </div>
+                        <p>If we change the simga, and let sigma=0.001. The restored image and corresponding frequency spectrum are as follows.</p>
+                        <div class="content-image">
+                           <img src="../image/Mar 6/Inwnoise1.jpg"/>
+                           <img src="../image/Mar 6/8.jpg"/>
+                        </div>
+                        <p>The results show that we can the inverse filter actully amplified noise when applied to a noisy blurred image.</p>
+                        <p>Matlab code</p>
+                        <pre class="mcode">
+clear;clc;
+A=imread('lena.jpg');
+            
+%-----define motion and blur the image----%
+len=10;
+theta=45;
+B=fspecial('motion',len,theta);
+%inverse filter
+[row col]=size(A);
+[row1 col1]=size(B);
+B1=padarray(B, [floor((row-row1)/2),floor((col-col1)/2)],'both');
+[row2 col2]=size(B1);
+if ((row-row2)>0)||((col-col2)>0)
+ B1=padarray(B1,[row-row2,col-col2],'post');
+end
+FB=fftshift(fft2(B1));
+logFB=log(1+abs(FB));
+            
+%-----Inversefilter deconvolve without noise----%
+FA=fftshift(fft2(A));
+logFA=log(1+abs(FA));
+figure(1);imshow(logFA,[]);
+figure(2);imshow(logFB,[]);
+FC=FA.*FB;
+logFC=log(1+abs(FC));
+figure(3);imshow(logFC,[]);
+FD=FC./FB;
+logFD=log(1+abs(FD));
+figure(4);imshow(logFD,[]);
+C=ifftshift(ifft2(FC)); C=uint8(abs(C));
+D=(ifft2(FD)); D=abs(D);
+imwrite(C,'blurred.jpg');
+imwrite(uint8(D),'Inwonoise.jpg');
+            
+%-----Inversefilter deconvolve with noise------%
+sigma=0.001;
+D=zeros(row,col);
+C1=imnoise(D,'gaussian',0,sigma);
+imwrite(uint8(C1),'noise.jpg');
+C2=C+uint8(C1);
+imwrite(uint8(C2),'noiseblurred.jpg');
+FC1=fftshift(fft2(C1));
+logFC1=log(1+abs(FC1));
+figure(5);imshow(logFC1,[]);
+FC2=FC+FC1;
+logFC2=log(1+abs(FC2));
+figure(6);imshow(logFC2,[]);
+FD1=FC2./FB;
+logFD1=log(1+abs(FD1));
+figure(7);imshow(logFD1,[]);
+D1=(ifft2(FD1)); D1=abs(D1);
+imwrite(uint8(D1),'Inwnoise.jpg');
+                        </pre>
+                        <br>
+                        <h4><em> Wiener Filter </em></h4>
+                        <h6><em>Written by Zhuoyu Li</em> on Feb. 24, 2015.</h6>
+                        <p>In order to obtain the restoration image with good quality, we use Weinner filter to restore the noisy blurred image.</p>
+                        <p>The following images show the restored image and its frequency spectrum. (sigma=0.001)
+                        <div class="content-image">
+                            <img src="../image/Mar 6/Wewnoise.jpg"/>
+                            <img src="../image/Mar 6/9.jpg"/>
+                        </div>
+                        <pre class="mcode">
+%-----Wienerfilter deconvolve with noise------%
+A=double(A);
+x=var(A(:));
+SNR=x/sigma;
+FBC=real(FB)-j*imag(FB);
+FD2=FC2./(FB+1./(SNR.*FBC));
+logFD2=log(1+abs(FD2));
+figure(8);imshow(logFD2,[]);
+D2=(ifft2(FD2)); D2=abs(D2);
+imwrite(uint8(D2),'Wewnoise.jpg');
+                        </pre>
+                    </div>
+                </div> 
+        </div>
+        <a class="topping" href="#top"><span class="glyphicon glyphicon-arrow-up gly-topping"></span></a>
+        <footer class="row">
+            &copy; Zhuoyu Li 2015
+        </footer>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    </body>
+</html>

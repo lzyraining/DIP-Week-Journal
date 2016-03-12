@@ -1,0 +1,135 @@
+<!Doctype html>
+<html>
+    <head>
+       <meta charset="utf-8">
+       <meta http-equiv="X-UA-Compatible" content="IE=edge">
+       <meta name="viewpoint" content="width=device-width, initial scale=1">
+	   <title>Zhuoyu's DIP Week Journal</title> 
+       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+	   <link rel="stylesheet" href="../css/main.css" type="text/css">
+    </head>
+    <body>
+        <div calss="container" id="top">
+            <div class="row header">
+                <div class="col-xs-8 col-xs-push-2">
+                    <h2>ENEE631 Digital Image Processing Week Journal</h1>
+			        <h3>@Zhuoyu Li, University of Maryland, College Park </h3>
+                </div>
+                <div class="col-xs-2">
+                    <a href="https://github.com/lzyraining/DIP-Week-Journal.git" target="_blank"><img class="img-responsive logo" src="../image/github_logo.png"></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="nav-bar col-xs-3">
+                    <div class="row mypicture">
+                        <div class="col-xs-8 col-xs-push-2">
+                            <image class="me img-responsive" src="../image/IMG_0846.jpg"></image>
+                        </div>
+                    </div>
+                    <div class="row nav-content">
+                        <ul class="nav-tab">
+                           <a href="../index.html"><li><span class="glyphicon glyphicon-home" aria-hidden="true"></span> &nbsp;&nbsp;&nbsp;Home</li></a>
+                           <a href="matlab_warmup.pdf" target="_blank"><li><span class="glyphicon glyphicon-fire" aria-hidden="true"></span> &nbsp;&nbsp;&nbsp;Matlab Warmingup</li></a>
+                           <li class="inactive"><span class="glyphicon glyphicon-book" aria-hidden="true"> Week Journal</li>
+                              <ul class="jounal-content">
+                                  <a href="Week2.html"><li>Week 2</li></a>
+                                  <a href="Week3.html"><li>Week 3</li></a>
+                                  <a href="Week4.html"><li>Week 4</li></a>
+                                  <a href="Week5.html"><li>Week 5</li></a>
+                                  <a href="Week6.html"><li class="active">Week 6</li></a>
+                                  <a href="Week8.html"><li>Week 8</li></a>
+                                  <a href="Week11.html"><li>Week 11</li></a>
+                                  <a href="Week13.html"><li>Week 13</li></a>
+                              </ul>
+                        </ul>
+                    </div>   
+                </div>
+                <div class="col-xs-9 content">
+                    <div class="topic">
+                        <h3><em> Watermark </em></h3>
+		                <h6>Written by <em>Zhuoyu Li</em> on Mar. 11, 2015.</h6>
+		                <p>Here we show the result of watermarking an logo to another image with a simple method. 
+             The way I show here is quiet easy. First we load two image A and B. Then we transform the image B to a binary mask.
+             Then we watermarking the binary mask to image A. Here are the two input images. We want to watermark the UMD terp logo into lena image.</p>
+		                <div class="content-image">
+                           <img src="../image/Mar 11/lena.jpg"/>
+                           <img src="../image/Mar 11/logo.png"/>
+                        </div>
+		                <p>Then we transform the logo into binary mask. Here I get the edge of the image using canny detector, and then use morphology to compensate the undetected edges.
+             The oringinal picture has a large size and the output image of the edge detector is not good. In order to make images in the website more consistent, 
+			 I low down the image size and the effect doesn't show.(we can see some edeg are different)
+             After dilation, we can see here that the contours of the terp are more thick. </p>
+		                <div class="content-image">
+                            <img src="../image/Mar 11/edge.jpg"/>
+                           <img src="../image/Mar 11/BW.jpg"/>
+                        </div>
+                        <p>Matlab Code:</p> 
+                        <pre class="mcode">
+clear;clc;
+%---Read images------%
+A=imread('lena.jpg');
+B=imread('logo.png');
+B=rgb2gray(B);
+A=imresize(A,size(B)); %resize image A with B
+
+%---Convert image B to a binary mask---%
+B=edge(B,'canny');
+imshow(B)
+
+imwrite(B,'edge.jpg');
+C=ones(3,3);
+B1=imdilate(B,C);
+imwrite(B1,'BW.jpg');
+
+%--Watermark image A with binary mask--%
+f = @(x) imadjust(x,[],[],0.7);
+D = roifilt2(A,B1,f);
+imwrite(D,'watermark.jpg'); </pre>
+                    </div>
+                    <hr>
+                    <div class="topic">
+                        <h3><em> Graylevel morphology </em></h3>
+		                <h6>Written by <em>Zhuoyu Li</em> on Mar. 11, 2015.</h6>
+                        <p>We have show one effect of morphology of binary image in watermark. Here we want to show the how morphological algorithms affect gray level images.
+               We start with an 256x256 gray level lena image. </p>
+			            <div class="content-image">
+                           <img src="../image/Mar 11/lena.jpg"/>
+                        </div>
+                        <p>Then we show the result of the dialation and erosion of lena image.</p>
+                        <div class="content-image">
+                           <img src="../image/Mar 11/Adi.jpg"/>
+                           <img src="../image/Mar 11/Aer.jpg"/>
+                        </div>
+			            <p>The results show that dialated image are more brighter than original image because each pixel take maxmium value of its neighbor.
+               In contrast, the eroded image is darker. The effects are quiet obvious in lena's hair and the fur of her hat.
+               Then we show the result of the opening algorithms of the lena image and the results of closing after openning.</p>
+                        <div class="content-image">
+                            <img src="../image/Mar 11/Aop.jpg"/>
+                            <img src="../image/Mar 11/Acl.jpg"/>
+                        </div>
+			            <p>The opening and closing algorithm can both smooth the contours, so the contours of the final image is less obvious.</p>
+                        <pre class="mcode">
+clear;clc;
+A=imread('lena.jpg');
+st=strel('square',3);
+Adi=imdilate(A,st);
+imwrite(Adi,'Adi.jpg');
+Aer=imerode(A,st);
+imwrite(Aer,'Aer.jpg');
+B=imnoise(A,'gaussian',0,0.001);
+Aop=imopen(A,st);
+imwrite(Aop,'Aop.jpg');
+Acl=imclose(Aop,st);
+imwrite(Acl,'Acl.jpg');			  
+			            </pre>
+                    </div>
+                </div> 
+        </div>
+        <a class="topping" href="#top"><span class="glyphicon glyphicon-arrow-up gly-topping"></span></a>
+        <footer class="row">
+            &copy; Zhuoyu Li 2015
+        </footer>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    </body>
+</html>
